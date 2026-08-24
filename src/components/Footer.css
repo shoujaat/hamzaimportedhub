@@ -1,0 +1,31 @@
+.footer {
+  margin-top: 80px;
+  background: var(--accent);
+  color: rgba(255,255,255,0.85);
+  padding: 40px 0;
+}
+
+.footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.footer__brand {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: #fff;
+}
+
+.footer__tagline {
+  font-size: 0.9rem;
+  opacity: 0.75;
+}
+
+.footer__copy {
+  font-size: 0.8rem;
+  opacity: 0.55;
+  margin-top: 8px;
+}

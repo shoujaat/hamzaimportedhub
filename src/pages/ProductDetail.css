@@ -1,0 +1,144 @@
+.detail {
+  padding: 40px 0 80px;
+}
+
+.detail__back {
+  display: inline-block;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  transition: color 0.15s;
+}
+.detail__back:hover { color: var(--accent); }
+
+.detail__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.detail__image-wrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  aspect-ratio: 4/3;
+}
+
+.detail__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.detail__category {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border-radius: 5px;
+}
+
+.detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.2;
+  font-weight: 400;
+}
+
+.detail__price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.detail__desc {
+  color: var(--text-muted);
+  line-height: 1.7;
+  font-size: 0.95rem;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.detail__meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.meta-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.meta-value {
+  font-size: 0.9rem;
+  background: var(--accent-lt);
+  color: var(--accent);
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 5px;
+}
+
+.detail__wa-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--wa-green);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 16px 28px;
+  border-radius: var(--radius);
+  transition: opacity 0.15s, transform 0.15s;
+  margin-top: 8px;
+}
+
+.detail__wa-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.detail__wa-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.detail-loading,
+.detail-notfound {
+  padding: 80px 24px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.detail-notfound a {
+  color: var(--accent);
+  display: block;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .detail__grid { grid-template-columns: 1fr; gap: 28px; }
+}
