@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './ProductDetail.css'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '923142459992'
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER
 
 export default function ProductDetail() {
   const { id } = useParams()

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import './ProductCard.css'
 
-const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '923142459992'
+const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER
 
 export default function ProductCard({ product }) {
   const waMessage = encodeURIComponent(
