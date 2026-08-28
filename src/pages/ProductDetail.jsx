@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './ProductDetail.css'
@@ -7,9 +7,11 @@ const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER
 
 export default function ProductDetail() {
   const { id } = useParams()
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [product, setProduct]   = useState(null)
+  const [loading, setLoading]   = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const [activeImg, setActiveImg] = useState(0)
+  const [lightbox, setLightbox]   = useState(false)
 
   useEffect(() => {
     async function fetchProduct() {
@@ -37,21 +39,62 @@ export default function ProductDetail() {
     `Hi! I'm interested in: ${product.name} — PKR ${product.price}\nProduct link: ${window.location.href}`
   )
   const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
+  const images = (product.image_urls && product.image_urls.length > 0)
+    ? product.image_urls
+    : product.image_url
+      ? [product.image_url]
+      : ['/placeholder.png']
 
   return (
     <div className="detail container">
       <Link to="/shop" className="detail__back">← Back to shop</Link>
 
       <div className="detail__grid">
-        {/* ── Image ─────────────────────────────────────────── */}
-        <div className="detail__image-wrap">
-          <img
-            src={product.image_url || '/placeholder.png'}
-            alt={product.name}
-            className="detail__image"
-          />
-          <span className="detail__category">{product.category}</span>
+                {/* ── Image gallery ─────────────────────────────────── */}
+        <div className="detail__gallery">
+          <div className="detail__image-wrap" onClick={() => setLightbox(true)}>
+            <img
+              src={images[activeImg] || '/placeholder.png'}
+              alt={product.name}
+              className="detail__image"
+            />
+            <span className="detail__category">{product.category}</span>
+            <span className="detail__zoom-hint">🔍 Click to enlarge</span>
+          </div>
+          {images.length > 1 && (
+            <div className="detail__thumbs">
+              {images.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt={`View ${i + 1}`}
+                  className={`detail__thumb ${i === activeImg ? 'detail__thumb--active' : ''}`}
+                  onClick={() => setActiveImg(i)}
+                />
+              ))}
+            </div>
+          )}
         </div>
+
+        {/* ── Lightbox ──────────────────────────────────────── */}
+        {lightbox && (
+          <div className="lightbox" onClick={() => setLightbox(false)}>
+            <button className="lightbox__close" onClick={() => setLightbox(false)}>✕</button>
+            {images.length > 1 && (
+              <button className="lightbox__prev" onClick={e => { e.stopPropagation(); setActiveImg(i => (i - 1 + images.length) % images.length) }}>‹</button>
+            )}
+            <img
+              src={images[activeImg]}
+              alt={product.name}
+              className="lightbox__img"
+              onClick={e => e.stopPropagation()}
+            />
+            {images.length > 1 && (
+              <button className="lightbox__next" onClick={e => { e.stopPropagation(); setActiveImg(i => (i + 1) % images.length) }}>›</button>
+            )}
+            <p className="lightbox__counter">{activeImg + 1} / {images.length}</p>
+          </div>
+        )}
 
         {/* ── Info ──────────────────────────────────────────── */}
         <div className="detail__info">

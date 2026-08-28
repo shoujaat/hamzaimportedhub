@@ -13,33 +13,36 @@ export default function AdminUpload() {
     condition: '',
     description: '',
   })
-  const [imageFile, setImageFile] = useState(null)
-  const [preview, setPreview]     = useState(null)
-  const [status, setStatus]       = useState('')
-  const [uploading, setUploading] = useState(false)
+  const [imageFiles, setImageFiles] = useState([])
+  const [previews, setPreviews]     = useState([])
+  const [status, setStatus]         = useState('')
+  const [uploading, setUploading]   = useState(false)
 
   function handleChange(e) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
   }
 
-  function handleImage(e) {
-    const file = e.target.files[0]
-    if (!file) return
-    setImageFile(file)
-    setPreview(URL.createObjectURL(file))
+    function handleImage(e) {
+    const files = Array.from(e.target.files).slice(0, 4)
+    setImageFiles(files)
+    setPreviews(files.map(f => URL.createObjectURL(f)))
   }
 
-  async function uploadToCloudinary() {
-    const data = new FormData()
-    data.append('file', imageFile)
-    data.append('upload_preset', UPLOAD_PRESET)
-    const res = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-      { method: 'POST', body: data }
-    )
-    const json = await res.json()
-    if (!json.secure_url) throw new Error('Cloudinary upload failed')
-    return json.secure_url
+    async function uploadToCloudinary() {
+    const urls = []
+    for (const file of imageFiles) {
+      const data = new FormData()
+      data.append('file', file)
+      data.append('upload_preset', UPLOAD_PRESET)
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        { method: 'POST', body: data }
+      )
+      const json = await res.json()
+      if (!json.secure_url) throw new Error('Cloudinary upload failed')
+      urls.push(json.secure_url)
+    }
+    return urls
   }
 
   async function handleSubmit(e) {
@@ -48,16 +51,16 @@ export default function AdminUpload() {
       setStatus('Please fill in name, category, and price.')
       return
     }
-    if (!imageFile) {
-      setStatus('Please select an image.')
+        if (imageFiles.length === 0) {
+      setStatus('Please select at least one image.')
       return
     }
 
     setUploading(true)
-    setStatus('Uploading image…')
+    setStatus(`Uploading ${imageFiles.length} image(s)…`)
 
     try {
-      const imageUrl = await uploadToCloudinary()
+      const imageUrls = await uploadToCloudinary()
       setStatus('Saving to database…')
 
       const { error } = await supabase.from('products').insert([{
@@ -66,15 +69,16 @@ export default function AdminUpload() {
         price:       parseFloat(form.price),
         condition:   form.condition.trim() || null,
         description: form.description.trim() || null,
-        image_url:   imageUrl,
+        image_url:   imageUrls[0],
+        image_urls:  imageUrls,
       }])
 
       if (error) throw error
 
       setStatus('✅ Product added successfully!')
-      setForm({ name: '', category: '', price: '', condition: '', description: '' })
-      setImageFile(null)
-      setPreview(null)
+            setForm({ name: '', category: '', price: '', condition: '', description: '' })
+      setImageFiles([])
+      setPreviews([])
     } catch (err) {
       setStatus(`❌ Error: ${err.message}`)
     } finally {
@@ -122,11 +126,15 @@ export default function AdminUpload() {
             placeholder="Describe the product — size, specs, colour, etc." />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="image">Product Image *</label>
-          <input id="image" type="file" accept="image/*" onChange={handleImage} />
-          {preview && (
-            <img src={preview} alt="Preview" className="admin__preview" />
+                <div className="form-group">
+          <label htmlFor="image">Product Images * (up to 4)</label>
+          <input id="image" type="file" accept="image/*" multiple onChange={handleImage} />
+          {previews.length > 0 && (
+            <div className="admin__previews">
+              {previews.map((src, i) => (
+                <img key={i} src={src} alt={`Preview ${i + 1}`} className="admin__preview" />
+              ))}
+            </div>
           )}
         </div>
 

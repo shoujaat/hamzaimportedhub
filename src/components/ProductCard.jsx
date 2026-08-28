@@ -13,7 +13,7 @@ export default function ProductCard({ product }) {
     <article className="product-card">
       <Link to={`/shop/${product.id}`} className="product-card__image-wrap">
         <img
-          src={product.image_url || '/placeholder.png'}
+          src={(product.image_urls && product.image_urls[0]) || product.image_url || '/placeholder.png'}
           alt={product.name}
           className="product-card__image"
           loading="lazy"
