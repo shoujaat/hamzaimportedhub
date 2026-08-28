@@ -2,39 +2,77 @@ import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import './AdminUpload.css'
 
-const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-const UPLOAD_PRESET = 'hamzaimportedhub_products'  // you'll create this in Cloudinary
+const CLOUD_NAME     = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+const UPLOAD_PRESET  = 'hamzaimportedhub_products'
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD
 
 export default function AdminUpload() {
+  // ── Auth state ───────────────────────────────────────────
+  const [authed, setAuthed]   = useState(false)
+  const [attempt, setAttempt] = useState('')
+  const [wrong, setWrong]     = useState(false)
+
+  // ── Form state ───────────────────────────────────────────
   const [form, setForm] = useState({
-    name: '',
-    category: '',
-    price: '',
-    condition: '',
-    description: '',
+    name: '', category: '', price: '', condition: '', description: '',
   })
   const [imageFiles, setImageFiles] = useState([])
   const [previews, setPreviews]     = useState([])
   const [status, setStatus]         = useState('')
   const [uploading, setUploading]   = useState(false)
 
+  // ── Password screen ──────────────────────────────────────
+  if (!authed) {
+    return (
+      <div className="admin container">
+        <h1 className="admin__title">Admin Access</h1>
+        <div className="admin__form" style={{ maxWidth: 380 }}>
+          <div className="form-group">
+            <label htmlFor="pw">Password</label>
+            <input
+              id="pw"
+              type="password"
+              value={attempt}
+              onChange={e => { setAttempt(e.target.value); setWrong(false) }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  attempt === ADMIN_PASSWORD ? setAuthed(true) : setWrong(true)
+                }
+              }}
+              placeholder="Enter admin password"
+              autoFocus
+            />
+          </div>
+          {wrong && <p className="admin__status error">❌ Wrong password.</p>}
+          <button
+            className="admin__submit"
+            onClick={() => attempt === ADMIN_PASSWORD ? setAuthed(true) : setWrong(true)}
+          >
+            Enter
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Handlers ─────────────────────────────────────────────
   function handleChange(e) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
   }
 
-    function handleImage(e) {
+  function handleImage(e) {
     const files = Array.from(e.target.files).slice(0, 4)
     setImageFiles(files)
     setPreviews(files.map(f => URL.createObjectURL(f)))
   }
 
-    async function uploadToCloudinary() {
+  async function uploadToCloudinary() {
     const urls = []
     for (const file of imageFiles) {
       const data = new FormData()
       data.append('file', file)
       data.append('upload_preset', UPLOAD_PRESET)
-      const res = await fetch(
+      const res  = await fetch(
         `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
         { method: 'POST', body: data }
       )
@@ -51,7 +89,7 @@ export default function AdminUpload() {
       setStatus('Please fill in name, category, and price.')
       return
     }
-        if (imageFiles.length === 0) {
+    if (imageFiles.length === 0) {
       setStatus('Please select at least one image.')
       return
     }
@@ -76,7 +114,7 @@ export default function AdminUpload() {
       if (error) throw error
 
       setStatus('✅ Product added successfully!')
-            setForm({ name: '', category: '', price: '', condition: '', description: '' })
+      setForm({ name: '', category: '', price: '', condition: '', description: '' })
       setImageFiles([])
       setPreviews([])
     } catch (err) {
@@ -86,6 +124,7 @@ export default function AdminUpload() {
     }
   }
 
+  // ── Admin form ───────────────────────────────────────────
   return (
     <div className="admin container">
       <h1 className="admin__title">Add a Product</h1>
@@ -109,13 +148,13 @@ export default function AdminUpload() {
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="price">Price (PKR) *</label>
-            <input id="price" name="price" type="number" value={form.price} onChange={handleChange}
-              placeholder="e.g. 15000" required min="0" />
+            <input id="price" name="price" type="number" value={form.price}
+              onChange={handleChange} placeholder="e.g. 15000" required min="0" />
           </div>
           <div className="form-group">
             <label htmlFor="condition">Condition</label>
-            <input id="condition" name="condition" value={form.condition} onChange={handleChange}
-              placeholder="e.g. Brand New, Used - Good" />
+            <input id="condition" name="condition" value={form.condition}
+              onChange={handleChange} placeholder="e.g. Brand New, Used - Good" />
           </div>
         </div>
 
@@ -126,7 +165,7 @@ export default function AdminUpload() {
             placeholder="Describe the product — size, specs, colour, etc." />
         </div>
 
-                <div className="form-group">
+        <div className="form-group">
           <label htmlFor="image">Product Images * (up to 4)</label>
           <input id="image" type="file" accept="image/*" multiple onChange={handleImage} />
           {previews.length > 0 && (
