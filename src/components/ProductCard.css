@@ -89,3 +89,24 @@
   opacity: 0.9;
   transform: translateY(-1px);
 }
+
+@media (max-width: 640px) {
+  .product-card__body {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .product-card__name {
+    font-size: 0.82rem;
+  }
+
+  .product-card__price {
+    font-size: 0.9rem;
+  }
+
+  .product-card__wa-btn {
+    font-size: 0.75rem;
+    padding: 7px 10px;
+    gap: 5px;
+  }
+}

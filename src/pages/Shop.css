@@ -129,6 +129,13 @@
   gap: 20px;
 }
 
+@media (max-width: 640px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
 .skeleton-card {
   background: var(--border);
   border-radius: var(--radius);

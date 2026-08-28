@@ -6,11 +6,18 @@ const CLOUD_NAME     = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
 const UPLOAD_PRESET  = 'hamzaimportedhub_products'
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD
 
+const DEFAULT_CATEGORIES = ['Sports Goods', 'Chromebooks', 'Shoes']
+
 export default function AdminUpload() {
   // ── Auth state ───────────────────────────────────────────
   const [authed, setAuthed]   = useState(false)
   const [attempt, setAttempt] = useState('')
   const [wrong, setWrong]     = useState(false)
+
+  // ── Category state ───────────────────────────────────────
+  const [categories, setCategories]     = useState(DEFAULT_CATEGORIES)
+  const [newCategory, setNewCategory]   = useState('')
+  const [showCatInput, setShowCatInput] = useState(false)
 
   // ── Form state ───────────────────────────────────────────
   const [form, setForm] = useState({
@@ -58,6 +65,17 @@ export default function AdminUpload() {
   // ── Handlers ─────────────────────────────────────────────
   function handleChange(e) {
     setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+  }
+
+  function handleAddCategory() {
+    const trimmed = newCategory.trim()
+    if (!trimmed) return
+    if (!categories.includes(trimmed)) {
+      setCategories(c => [...c, trimmed])
+    }
+    setForm(f => ({ ...f, category: trimmed }))
+    setNewCategory('')
+    setShowCatInput(false)
   }
 
   function handleImage(e) {
@@ -141,8 +159,42 @@ export default function AdminUpload() {
 
         <div className="form-group">
           <label htmlFor="category">Category *</label>
-          <input id="category" name="category" value={form.category} onChange={handleChange}
-            placeholder="e.g. Shoes, Sports Goods, Chromebooks" required />
+          <select
+            id="category"
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            required
+            className="form-select"
+          >
+            <option value="">— Select a category —</option>
+            {categories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+
+          {!showCatInput ? (
+            <button
+              type="button"
+              className="cat-add-btn"
+              onClick={() => setShowCatInput(true)}
+            >
+              + Add custom category
+            </button>
+          ) : (
+            <div className="cat-input-row">
+              <input
+                type="text"
+                value={newCategory}
+                onChange={e => setNewCategory(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
+                placeholder="e.g. Accessories"
+                autoFocus
+              />
+              <button type="button" className="cat-confirm-btn" onClick={handleAddCategory}>Add</button>
+              <button type="button" className="cat-cancel-btn" onClick={() => { setShowCatInput(false); setNewCategory('') }}>✕</button>
+            </div>
+          )}
         </div>
 
         <div className="form-row">
