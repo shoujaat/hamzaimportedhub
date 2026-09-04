@@ -36,7 +36,7 @@ export default function ProductDetail() {
   )
 
   const waMessage = encodeURIComponent(
-    `Hi! I'm interested in: ${product.name} — PKR ${product.price}\nProduct link: ${window.location.href}`
+    `Hi! I'm interested in: ${product.name} — PKR ${product.price}\nProduct link: ${window.location.href}\nImage: ${images[0]}`
   )
   const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
   const images = (product.image_urls && product.image_urls.length > 0)
