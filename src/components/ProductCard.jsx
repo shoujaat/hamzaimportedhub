@@ -10,7 +10,7 @@ export default function ProductCard({ product }) {
   const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
 
   return (
-    <article className="product-card">
+    <article className={`product-card ${product.sold_out ? 'product-card--soldout' : ''}`}>
       <Link to={`/shop/${product.id}`} className="product-card__image-wrap">
         <img
           src={(product.image_urls && product.image_urls[0]) || product.image_url || '/placeholder.png'}
@@ -19,6 +19,9 @@ export default function ProductCard({ product }) {
           loading="lazy"
         />
         <span className="product-card__category">{product.category}</span>
+        {product.sold_out && (
+          <span className="product-card__soldout-badge">Sold Out</span>
+        )}
       </Link>
 
       <div className="product-card__body">
@@ -27,16 +30,23 @@ export default function ProductCard({ product }) {
         </Link>
         <p className="product-card__price">PKR {Number(product.price).toLocaleString()}</p>
 
-        <a
-          href={waLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="product-card__wa-btn"
-          aria-label={`Contact seller about ${product.name} on WhatsApp`}
-        >
-          <WhatsAppIcon />
-          Ask on WhatsApp
-        </a>
+        {product.sold_out ? (
+          <div className="product-card__wa-btn product-card__wa-btn--disabled">
+            <WhatsAppIcon />
+            Sold Out
+          </div>
+        ) : (
+          <a
+            href={waLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="product-card__wa-btn"
+            aria-label={`Contact seller about ${product.name} on WhatsApp`}
+          >
+            <WhatsAppIcon />
+            Ask on WhatsApp
+          </a>
+        )}
       </div>
     </article>
   )

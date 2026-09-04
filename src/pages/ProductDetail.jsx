@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import './ProductDetail.css'
@@ -7,9 +7,9 @@ const WA_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER
 
 export default function ProductDetail() {
   const { id } = useParams()
-  const [product, setProduct]   = useState(null)
-  const [loading, setLoading]   = useState(true)
-  const [notFound, setNotFound] = useState(false)
+  const [product, setProduct]     = useState(null)
+  const [loading, setLoading]     = useState(true)
+  const [notFound, setNotFound]   = useState(false)
   const [activeImg, setActiveImg] = useState(0)
   const [lightbox, setLightbox]   = useState(false)
 
@@ -50,7 +50,7 @@ export default function ProductDetail() {
       <Link to="/shop" className="detail__back">← Back to shop</Link>
 
       <div className="detail__grid">
-                {/* ── Image gallery ─────────────────────────────────── */}
+        {/* ── Image gallery ─────────────────────────────────── */}
         <div className="detail__gallery">
           <div className="detail__image-wrap" onClick={() => setLightbox(true)}>
             <img
@@ -81,7 +81,10 @@ export default function ProductDetail() {
           <div className="lightbox" onClick={() => setLightbox(false)}>
             <button className="lightbox__close" onClick={() => setLightbox(false)}>✕</button>
             {images.length > 1 && (
-              <button className="lightbox__prev" onClick={e => { e.stopPropagation(); setActiveImg(i => (i - 1 + images.length) % images.length) }}>‹</button>
+              <button
+                className="lightbox__prev"
+                onClick={e => { e.stopPropagation(); setActiveImg(i => (i - 1 + images.length) % images.length) }}
+              >‹</button>
             )}
             <img
               src={images[activeImg]}
@@ -90,7 +93,10 @@ export default function ProductDetail() {
               onClick={e => e.stopPropagation()}
             />
             {images.length > 1 && (
-              <button className="lightbox__next" onClick={e => { e.stopPropagation(); setActiveImg(i => (i + 1) % images.length) }}>›</button>
+              <button
+                className="lightbox__next"
+                onClick={e => { e.stopPropagation(); setActiveImg(i => (i + 1) % images.length) }}
+              >›</button>
             )}
             <p className="lightbox__counter">{activeImg + 1} / {images.length}</p>
           </div>
@@ -114,15 +120,22 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="detail__wa-btn"
-          >
-            <WhatsAppIcon />
-            Contact Seller on WhatsApp
-          </a>
+          {product.sold_out ? (
+            <span className="detail__wa-btn detail__wa-btn--disabled">
+              <WhatsAppIcon />
+              Sold Out
+            </span>
+          ) : (
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="detail__wa-btn"
+            >
+              <WhatsAppIcon />
+              Contact Seller on WhatsApp
+            </a>
+          )}
 
           <p className="detail__wa-note">
             Tap the button above to message the seller directly. No account needed.
