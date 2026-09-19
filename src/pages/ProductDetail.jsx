@@ -35,15 +35,16 @@ export default function ProductDetail() {
     </div>
   )
 
-  const waMessage = encodeURIComponent(
-    `Hi! I'm interested in: ${product.name} — PKR ${product.price}\nProduct link: ${window.location.href}\nImage: ${images[0]}`
-  )
-  const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
   const images = (product.image_urls && product.image_urls.length > 0)
     ? product.image_urls
     : product.image_url
       ? [product.image_url]
       : ['/placeholder.png']
+
+  const waMessage = encodeURIComponent(
+    `Hi! I'm interested in: ${product.name} — PKR ${product.price}\nProduct link: ${window.location.href}\nImage: ${images[0]}`
+  )
+  const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
 
   return (
     <div className="detail container">
@@ -83,7 +84,7 @@ export default function ProductDetail() {
             {images.length > 1 && (
               <button
                 className="lightbox__prev"
-                onClick={e => { e.stopPropagation(); setActiveImg(i => (i - 1 + images.length) % images.length) }}
+                onClick={e => { e.stopPropagation(); setActiveImg(prev => (prev - 1 + images.length) % images.length) }}
               >‹</button>
             )}
             <img
@@ -95,7 +96,7 @@ export default function ProductDetail() {
             {images.length > 1 && (
               <button
                 className="lightbox__next"
-                onClick={e => { e.stopPropagation(); setActiveImg(i => (i + 1) % images.length) }}
+                onClick={e => { e.stopPropagation(); setActiveImg(prev => (prev + 1) % images.length) }}
               >›</button>
             )}
             <p className="lightbox__counter">{activeImg + 1} / {images.length}</p>
