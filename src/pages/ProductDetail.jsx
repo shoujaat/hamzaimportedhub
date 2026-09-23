@@ -42,7 +42,7 @@ export default function ProductDetail() {
       : ['/placeholder.png']
 
   const waMessage = encodeURIComponent(
-    `${product.name} - PKR ${product.price}\n${window.location.href}`
+    `${product.name} - PKR ${product.price} - ${window.location.href}`
   )
   const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
 
