@@ -42,7 +42,7 @@ export default function ProductDetail() {
       : ['/placeholder.png']
 
   const waMessage = encodeURIComponent(
-    `${product.name} - PKR ${product.price} - ${window.location.href}`
+    `${product.name} - PKR ${product.price} - https://hamzaimportedhub.netlify.app/shop/${product.id}`
   )
   const waLink = `https://wa.me/${WA_NUMBER}?text=${waMessage}`
 
